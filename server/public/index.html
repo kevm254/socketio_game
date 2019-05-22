@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Socket.IO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.2.0/anime.js"></script>
+
+</head>
+<body>
+    <div style="background-color: blue; height: 100px; width: 100px" id="box"></div>
+    <script>
+        // define socket io
+        let socket = io();
+        let box = document.getElementById('box');
+
+        let keys = {
+            left: 37,
+            right: 39,
+            up: 38,
+            down: 40
+        };
+
+        document.addEventListener('keyup', (evt) => {
+            switch(evt.keyCode) {
+                case keys.left:
+                    socket.emit('button_pressed', 'left');
+                    break;
+                case keys.right:
+                    socket.emit('button_pressed', 'right');
+                    break;
+                case keys.up:
+                    socket.emit('button_pressed', 'up');
+                    break;
+                case keys.down:
+                    socket.emit('button_pressed', 'down');
+                    break;
+                default:
+                    return;
+            }
+
+            });
+
+
+        socket.on('button_pressed_server', (dir) => {
+            switch(dir) {
+                case 'up':
+                    move('up');
+                    break;
+                case 'down':
+                    move('down');
+                    break;
+                case 'left':
+                    move('left');
+                    break;
+                case 'right':
+                    move('right');
+                    break;
+
+            }
+
+        });
+
+        function move(dir) {
+            let operation = {};
+            if (dir === 'up') operation = { translateY: '-=50px ', translateX: '+=0px'};
+            if (dir === 'down') operation = { translateY: '+=50px', translateX: '+=0px'};
+            if (dir === 'left') operation = { translateX: '-=50px', translateY: '+=0px'};
+            if (dir === 'right') operation = { translateX: '+=50px', translateY: '+=0px'};
+
+            let animObj = Object.assign({
+                targets: '#box',
+                easing: 'linear'
+            }, operation);
+
+            anime(animObj);
+        }
+
+    </script>
+</body>
+</html>
